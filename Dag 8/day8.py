@@ -74,6 +74,7 @@ def second(file_name):
             break
         elif operation == 'jmp' and pc + 1 in terminating:
             code[pc] = ('nop', argument)
+            break
     pc = 0
     while pc in range(len(code)):
         visited.add(pc)

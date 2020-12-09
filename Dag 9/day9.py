@@ -54,17 +54,17 @@ def second(file_name):
             matching_numbers[sum] += 1
         previous.append(number)
     start_i = 0
-    end_i = -1
+    end_i = 0
     sum = 0
     while sum != number:
         if sum < number:
-            end_i += 1
             sum += indata[end_i]
+            end_i += 1
         else:
             sum -= indata[start_i]
             start_i += 1
     else:
-        print("Second star: {}".format(indata[start_i] + indata[end_i]))
+        print("Second star: {}".format(min(indata[start_i:end_i]) + max(indata[start_i:end_i])))
 
 if __name__ == "__main__":
     first(sys.argv[1])

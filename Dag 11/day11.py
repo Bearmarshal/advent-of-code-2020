@@ -5,7 +5,6 @@ import itertools
 import operator
 import re
 import sys
-import time
 
 class Chair:
     def __init__(self):
@@ -54,10 +53,10 @@ def stabilise_chair_occupation(chairs, tolerance):
         activated = set()
         for chair in active:
             if chair.occupants:
-                stubbornness = tolerance
+                remaining_tolerance = tolerance
                 for neighbour in chair.neighbours:
-                    stubbornness -= neighbour.occupants
-                    if not stubbornness:
+                    remaining_tolerance -= neighbour.occupants
+                    if not remaining_tolerance:
                         changing.add(chair)
                         activated.update(chair.neighbours)
                         break
@@ -87,8 +86,5 @@ def second(file_name):
     print("Second star: {}".format(sum([chair.occupants for chair in chairs])))
 
 if __name__ == "__main__":
-    time_start = time.time() * 1000
     first(sys.argv[1])
     second(sys.argv[1])
-    time_end = time.time() * 1000
-    print("{} ms".format(time_end - time_start))

@@ -36,7 +36,7 @@ def second(file_name):
         else:
             address = int(match['address']) | or_mask
             value = int(match['value'])
-            for collapsed_state in itertools.product([0,1], repeat = len(quant_mask)):
+            for collapsed_state in itertools.product((True, False), repeat = len(quant_mask)):
                 xor_mask = sum(itertools.compress(quant_mask, collapsed_state))
                 mem[address ^ xor_mask] = value
     print("Second star: {}".format(sum(mem.values())))

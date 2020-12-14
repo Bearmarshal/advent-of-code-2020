@@ -32,7 +32,7 @@ def second(file_name):
     for match in re.finditer(r'(?:mask = (?P<mask>[01X]{36})|mem\[(?P<address>\d+)\] = (?P<value>\d+))', indata):
         if mask := match['mask']:
             or_mask = int(mask.replace('X', '0'), 2)
-            quant_mask = [2 ** i for bit, i in zip(reversed(mask), itertools.count(0)) if bit == 'X']
+            quant_mask = [2 ** i for i, bit in enumerate(reversed(mask)) if bit == 'X']
         else:
             address = int(match['address']) | or_mask
             value = int(match['value'])

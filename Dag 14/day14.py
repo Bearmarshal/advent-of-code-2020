@@ -6,7 +6,6 @@ import itertools
 import operator
 import re
 import sys
-import time
 
 def first(file_name):
     with io.open(file_name, mode = 'r') as infile:
@@ -44,7 +43,4 @@ def second(file_name):
 
 if __name__ == "__main__":
     first(sys.argv[1])
-    start_time = time.time() * 1000
     second(sys.argv[1])
-    end_time = time.time() * 1000
-    print(end_time - start_time)

@@ -6,6 +6,7 @@ import itertools
 import operator
 import re
 import sys
+import time
 
 def first(file_name):
     with io.open(file_name, mode = 'r') as infile:
@@ -32,15 +33,18 @@ def second(file_name):
     for match in re.finditer(r'(?:mask = (?P<mask>[01X]{36})|mem\[(?P<address>\d+)\] = (?P<value>\d+))', indata):
         if mask := match['mask']:
             or_mask = int(mask.replace('X', '0'), 2)
-            quant_mask = [2**i for bit, i in zip(reversed(mask), itertools.count(0)) if bit == 'X']
+            quant_mask = [2 ** i for bit, i in zip(reversed(mask), itertools.count(0)) if bit == 'X']
         else:
             address = int(match['address']) | or_mask
             value = int(match['value'])
-            for i in range(2 ** len(quant_mask)):
-                xor_mask = sum([quant_mask[j] for c, j in zip(reversed(f'{i:b}'), itertools.count(0)) if int(c)])
+            for collapsed_state in itertools.product([0,1], repeat = len(quant_mask)):
+                xor_mask = sum(itertools.compress(quant_mask, collapsed_state))
                 mem[address ^ xor_mask] = value
     print("Second star: {}".format(sum(mem.values())))
 
 if __name__ == "__main__":
     first(sys.argv[1])
+    start_time = time.time() * 1000
     second(sys.argv[1])
+    end_time = time.time() * 1000
+    print(end_time - start_time)

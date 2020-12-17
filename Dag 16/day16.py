@@ -26,6 +26,10 @@ class Possibilities:
         self.resolved = {}
 
     def exclude(self, field, position):
+        if field in self.positions and position in self.positions[field]:
+            self.meticulous_exclude(field, position)
+        
+    def meticulous_exclude(self, field, position):
         if field in self.positions:
             possible_positions = self.positions[field]
             if position in possible_positions:
@@ -36,7 +40,7 @@ class Possibilities:
                     self.fields.pop(position_of_field, None)
                     self.resolved[field] = position_of_field
                     for other_field in list(self.positions):
-                        self.exclude(other_field, position_of_field)
+                        self.meticulous_exclude(other_field, position_of_field)
         if position in self.fields:
             possible_fields = self.fields[position]
             if field in possible_fields:
@@ -47,7 +51,7 @@ class Possibilities:
                     self.fields.pop(position, None)
                     self.resolved[field_at_position] = position
                     for other_position in list(self.fields):
-                        self.exclude(field, other_position)
+                        self.meticulous_exclude(field, other_position)
 
     def are_resolved(self):
         return not self.positions
@@ -89,7 +93,6 @@ def second(file_name):
             for position, value in enumerate(list(other_ticket)):
                 for field, possible_positions in list(possibilities.positions.items()):
                     if position in possible_positions and value not in fields[field]:
-                        print(f"value {value} at position {position} can't be {field}")
                         possibilities.exclude(field, position)
         if possibilities.are_resolved():
             print("Second star: {}".format(functools.reduce(operator.mul, [my_ticket[possibilities.resolved[field]] for field in fields if "departure" in field])))

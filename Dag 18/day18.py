@@ -1,3 +1,5 @@
+import ast
+import code
 import collections
 import functools
 import io
@@ -45,11 +47,9 @@ def first(file_name):
     token_regex = re.compile(r'(?P<number>\d+)|(?P<operator>[+*])|(?P<parenthesis>[()])')
     print("First star: {}".format(sum((calculate(token_regex.findall(line)) for line in indata))))
 
-# def second(file_name):
-#     with io.open(file_name, mode = 'r') as infile:
-#         indata = [line.strip() for line in infile]
-#     print("Second star: {}".format())
+def second(file_name):
+    print("Second star: {}".format(sum(eval(compile((translate_back if (translate_back := ast.NodeTransformer()) and not setattr(translate_back, 'visit_Add', lambda _: ast.Mult()) and not setattr(translate_back, 'visit_Mult', lambda _: ast.Add()) else None).visit(ast.parse(io.open(file_name).read().translate({43: 42, 42: 43, 10: 44}), mode='eval')), '', 'eval')))))
 
 if __name__ == "__main__":
     first(sys.argv[1])
-    # second(sys.argv[1])
+    second(sys.argv[1])

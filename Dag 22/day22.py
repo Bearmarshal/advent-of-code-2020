@@ -7,7 +7,6 @@ import math
 import operator
 import re
 import sys
-import time
 
 def first(file_name):
     with io.open(file_name, mode = 'r') as infile:
@@ -38,23 +37,25 @@ def deck_score(deck):
 def sub_game(player_1_deck, player_2_deck):
     state_cache = set()
     while player_1_deck and player_2_deck:
-        state = deck_score(player_1_deck), deck_score(player_2_deck)
+        state = player_1_deck, player_2_deck
         if state in state_cache:
             return player_1_deck, None
         state_cache.add(state)
-        player_1_card = player_1_deck.popleft()
-        player_2_card = player_2_deck.popleft()
+        player_1_card = player_1_deck[0]
+        player_1_deck = player_1_deck[1:]
+        player_2_card = player_2_deck[0]
+        player_2_deck = player_2_deck[1:]
         if player_1_card > len(player_1_deck) or player_2_card > len(player_2_deck):
             if player_1_card > player_2_card:
-                player_1_deck.extend((player_1_card, player_2_card))
+                player_1_deck = (*player_1_deck, player_1_card, player_2_card)
             else:
-                player_2_deck.extend((player_2_card, player_1_card))
+                player_2_deck = (*player_2_deck, player_2_card, player_1_card)
         else:
-            player_1_sub_deck, _ = sub_game(collections.deque(itertools.islice(player_1_deck, player_1_card)), collections.deque(itertools.islice(player_2_deck, player_2_card)))
+            player_1_sub_deck, _ = sub_game(player_1_deck[:player_1_card], player_2_deck[:player_2_card])
             if player_1_sub_deck:
-                player_1_deck.extend((player_1_card, player_2_card))
+                player_1_deck = (*player_1_deck, player_1_card, player_2_card)
             else:
-                player_2_deck.extend((player_2_card, player_1_card))
+                player_2_deck = (*player_2_deck, player_2_card, player_1_card)
     return player_1_deck, player_2_deck
 
 def second(file_name):
@@ -64,11 +65,11 @@ def second(file_name):
     player_decks = {}
     for match in player_regex.finditer(indata):
         player = match['player']
-        deck = collections.deque()
+        deck = []
         for card in match['cards'].strip().split('\n'):
             deck.append(int(card))
         player_decks[player] = deck
-    player_1_deck, player_2_deck = sub_game(player_decks['1'], player_decks['2'])
+    player_1_deck, player_2_deck = sub_game(tuple(player_decks['1']), tuple(player_decks['2']))
     winning_deck = player_1_deck if player_1_deck else player_2_deck
     print("Second star: {}".format(deck_score(winning_deck)))
 

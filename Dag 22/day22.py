@@ -51,8 +51,9 @@ def sub_game(player_1_deck, player_2_deck):
             else:
                 player_2_deck = (*player_2_deck, player_2_card, player_1_card)
         else:
-            player_1_sub_deck, _ = sub_game(player_1_deck[:player_1_card], player_2_deck[:player_2_card])
-            if player_1_sub_deck:
+            if max(player_1_deck[:player_1_card], default=0) > max(player_2_deck[:player_2_card], default=0):
+                player_1_deck = (*player_1_deck, player_1_card, player_2_card)
+            elif sub_game(player_1_deck[:player_1_card], player_2_deck[:player_2_card])[0]:
                 player_1_deck = (*player_1_deck, player_1_card, player_2_card)
             else:
                 player_2_deck = (*player_2_deck, player_2_card, player_1_card)
